@@ -20,9 +20,9 @@ public class Main {
         System.out.println(result.getDatasetName());
         System.out.println("==================================================");
 
-        System.out.println("Bubble Sort Average Time: " + result.getBubbleTime() + " ns");
-        System.out.println("Quick Sort Average Time:  " + result.getQuickTime() + " ns");
-        System.out.println("Merge Sort Average Time:  " + result.getMergeTime() + " ns");
+        System.out.printf("Bubble Sort Average Time: %.3f ms%n", result.getBubbleTime());
+        System.out.printf("Quick Sort Average Time:  %.3f ms%n", result.getQuickTime());
+        System.out.printf("Merge Sort Average Time:  %.3f ms%n", result.getMergeTime());
 
         System.out.println();
         System.out.println("Top 10 Selected Locations:");
@@ -43,9 +43,9 @@ public class Main {
 
         System.out.printf("%-12s %-18s %-18s %-18s %-50s%n",
                 "Dataset",
-                "Bubble(ns)",
-                "Quick(ns)",
-                "Merge(ns)",
+                "Bubble(ms)",
+                "Quick(ms)",
+                "Merge(ms)",
                 "Top 10 Selected Locations");
 
         System.out.println("------------------------------------------------------------------------------------------------------------------------");
@@ -58,7 +58,7 @@ public class Main {
     }
 
     private static void printSummaryRow(TaskAResult result) {
-        System.out.printf("%-12s %-18d %-18d %-18d %-50s%n",
+        System.out.printf("%-12s %-18.3f %-18.3f %-18.3f %-50s%n",
                 result.getDatasetName(),
                 result.getBubbleTime(),
                 result.getQuickTime(),

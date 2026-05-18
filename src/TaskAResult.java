@@ -1,11 +1,11 @@
 public class TaskAResult {
     private String datasetName;
-    private long bubbleTime;
-    private long quickTime;
-    private long mergeTime;
+    private double bubbleTime;
+    private double quickTime;
+    private double mergeTime;
     private Location[] topTenLocations;
 
-    public TaskAResult(String datasetName, long bubbleTime, long quickTime, long mergeTime, Location[] topTenLocations) {
+    public TaskAResult(String datasetName, double bubbleTime, double quickTime, double mergeTime, Location[] topTenLocations) {
         this.datasetName = datasetName;
         this.bubbleTime = bubbleTime;
         this.quickTime = quickTime;
@@ -17,15 +17,15 @@ public class TaskAResult {
         return datasetName;
     }
 
-    public long getBubbleTime() {
+    public double getBubbleTime() {
         return bubbleTime;
     }
 
-    public long getQuickTime() {
+    public double getQuickTime() {
         return quickTime;
     }
 
-    public long getMergeTime() {
+    public double getMergeTime() {
         return mergeTime;
     }
 

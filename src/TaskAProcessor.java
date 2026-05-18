@@ -1,5 +1,6 @@
 public class TaskAProcessor {
-    private static final int REPEAT_TIMES = 3;
+    private static final int WARM_UP_RUNS = 50;
+    private static final int REPEAT_TIMES = 1000;
 
     public TaskAResult processDataset(String datasetName, String filePath) {
         Location[] originalLocations = CSVReader.readLocations(filePath);
@@ -8,9 +9,9 @@ public class TaskAProcessor {
         SortAlgorithm quickSort = new QuickSort();
         SortAlgorithm mergeSort = new MergeSort();
 
-        long bubbleAverageTime = measureAverageTime(bubbleSort, originalLocations);
-        long quickAverageTime = measureAverageTime(quickSort, originalLocations);
-        long mergeAverageTime = measureAverageTime(mergeSort, originalLocations);
+        double bubbleAverageTime = measureAverageTime(bubbleSort, originalLocations);
+        double quickAverageTime = measureAverageTime(quickSort, originalLocations);
+        double mergeAverageTime = measureAverageTime(mergeSort, originalLocations);
 
         Location[] sortedLocations = copyLocations(originalLocations);
         mergeSort.sort(sortedLocations);
@@ -20,7 +21,12 @@ public class TaskAProcessor {
         return new TaskAResult(datasetName, bubbleAverageTime, quickAverageTime, mergeAverageTime, topTenLocations);
     }
 
-    private long measureAverageTime(SortAlgorithm algorithm, Location[] originalLocations) {
+    private double measureAverageTime(SortAlgorithm algorithm, Location[] originalLocations) {
+        for (int i = 0; i < WARM_UP_RUNS; i++) {
+            Location[] copiedLocations = copyLocations(originalLocations);
+            algorithm.sort(copiedLocations);
+        }
+
         long totalTime = 0;
 
         for (int i = 0; i < REPEAT_TIMES; i++) {
@@ -33,7 +39,7 @@ public class TaskAProcessor {
             totalTime += endTime - startTime;
         }
 
-        return totalTime / REPEAT_TIMES;
+        return (double) totalTime / REPEAT_TIMES / 1_000_000.0;
     }
 
     private Location[] copyLocations(Location[] originalLocations) {
