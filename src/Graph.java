@@ -11,6 +11,10 @@ public class Graph {
         adjacencyList = new HashMap<>();
     }
 
+    /**
+     * Loads an undirected weighted graph from a CSV file and prints
+     * the basic structural statistics (V, E, density, average degree).
+     */
     public void loadFromCSV(String filePath) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
@@ -31,6 +35,37 @@ public class Graph {
             System.out.println("Error reading graph file: " + filePath);
             e.printStackTrace();
         }
+
+        printGraphStatistics();
+    }
+
+    /**
+     * Prints |V|, |E|, density and average degree of the loaded graph.
+     * Each undirected edge appears twice in the adjacency list, so we
+     * divide the total directed edge count by 2.
+     */
+    private void printGraphStatistics() {
+        int v = adjacencyList.size();
+
+        int totalDirectedEdges = 0;
+        for (ArrayList<Edge> edges : adjacencyList.values()) {
+            totalDirectedEdges += edges.size();
+        }
+        int e = totalDirectedEdges / 2;
+
+        double density = 0.0;
+        double avgDegree = 0.0;
+        if (v > 1) {
+            density = (2.0 * e) / ((double) v * (v - 1));
+            avgDegree = (2.0 * e) / v;
+        }
+
+        System.out.println("Graph loaded successfully:");
+        System.out.printf("  Nodes (V):      %d%n", v);
+        System.out.printf("  Edges (E):      %d%n", e);
+        System.out.printf("  Density:        %.4f%n", density);
+        System.out.printf("  Avg degree:     %.2f%n", avgDegree);
+        System.out.println();
     }
 
     public void addUndirectedEdge(String fromLocation, String toLocation, int weight) {

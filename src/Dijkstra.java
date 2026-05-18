@@ -67,8 +67,16 @@ public class Dijkstra {
         return new PathResult(path, totalCost);
     }
 
+    /**
+     * Finds the shortest path that visits a sequence of locations in
+     * order (start, waypoint_1, ..., destination) by chaining one
+     * Dijkstra call per leg. The per-leg sub-results are attached to
+     * the returned PathResult so that callers can render them
+     * separately while still seeing the concatenated full path.
+     */
     public PathResult findPathThroughWaypoints(String[] locations) {
         ArrayList<String> fullPath = new ArrayList<>();
+        ArrayList<PathResult> segments = new ArrayList<>();
         int totalCost = 0;
 
         for (int i = 0; i < locations.length - 1; i++) {
@@ -79,11 +87,13 @@ public class Dijkstra {
                 return new PathResult(emptyPath, Integer.MAX_VALUE);
             }
 
+            segments.add(segmentResult);
             totalCost += segmentResult.getTotalCost();
 
             String[] segmentPath = segmentResult.getPath();
 
             for (int j = 0; j < segmentPath.length; j++) {
+                // skip the shared join node so it is not duplicated
                 if (i > 0 && j == 0) {
                     continue;
                 }
@@ -98,7 +108,9 @@ public class Dijkstra {
             resultPath[i] = fullPath.get(i);
         }
 
-        return new PathResult(resultPath, totalCost);
+        PathResult combined = new PathResult(resultPath, totalCost);
+        combined.setSegments(segments);
+        return combined;
     }
 
     private String[] buildPath(HashMap<String, String> previous, String start, String destination) {

@@ -1,0 +1,70 @@
+Graph loaded successfully:
+  Nodes (V):      1000
+  Edges (E):      2600
+  Density:        0.0052
+  Avg degree:     5.20
+
+==================================================
+Task B Shortest Path Results
+==================================================
+Case 1
+Start Node: L0001
+Destination Node: L0001
+Waypoint(s): None
+Shortest Path: L0001
+Total Cost: 0
+
+Case 2
+Start Node: L0001
+Destination Node: L0010
+Waypoint(s): None
+Shortest Path: L0001 -> L0340 -> L0339 -> L0895 -> L0894 -> L0082 -> L0284 -> L0010
+Total Cost: 27
+
+Case 3
+Start Node: L0001
+Destination Node: L0101
+Waypoint(s): L0105
+  Segment 1 (L0001 -> L0105): L0001 -> L0340 -> L0339 -> L0247 -> L0017 -> L0128 -> L0107 -> L0106 -> L0105, cost = 22
+  Segment 2 (L0105 -> L0101): L0105 -> L0106 -> L0107 -> L0108 -> L0827 -> L0996 -> L0101, cost = 17
+Full path: L0001 -> L0340 -> L0339 -> L0247 -> L0017 -> L0128 -> L0107 -> L0106 -> L0105 -> L0106 -> L0107 -> L0108 -> L0827 -> L0996 -> L0101
+Total cost: 39
+
+Case 4
+Start Node: L0001
+Destination Node: L0201
+Waypoint(s): L0105 -> L0205
+  Segment 1 (L0001 -> L0105): L0001 -> L0340 -> L0339 -> L0247 -> L0017 -> L0128 -> L0107 -> L0106 -> L0105, cost = 22
+  Segment 2 (L0105 -> L0205): L0105 -> L0106 -> L0107 -> L0108 -> L0243 -> L0242 -> L0241 -> L0385 -> L0205, cost = 18
+  Segment 3 (L0205 -> L0201): L0205 -> L0201, cost = 8
+Full path: L0001 -> L0340 -> L0339 -> L0247 -> L0017 -> L0128 -> L0107 -> L0106 -> L0105 -> L0106 -> L0107 -> L0108 -> L0243 -> L0242 -> L0241 -> L0385 -> L0205 -> L0201
+Total cost: 48
+
+==================================================
+Task B Summary Table
+==================================================
+Case     Start      Destination    Waypoint(s)        Cost       Shortest Path                                                                   
+------------------------------------------------------------------------------------------------------------------------------------------------
+Case 1   L0001      L0001          None               0          L0001                                                                           
+Case 2   L0001      L0010          None               27         L0001 -> L0340 -> L0339 -> L0895 -> L0894 -> L0082 -> L0284 -> L0010            
+Case 3   L0001      L0101          L0105              39         L0001 -> L0340 -> L0339 -> L0247 -> L0017 -> L0128 -> L0107 -> L0106 -> L0105 -> L0106 -> L0107 -> L0108 -> L0827 -> L0996 -> L0101
+Case 4   L0001      L0201          L0105 -> L0205     48         L0001 -> L0340 -> L0339 -> L0247 -> L0017 -> L0128 -> L0107 -> L0106 -> L0105 -> L0106 -> L0107 -> L0108 -> L0243 -> L0242 -> L0241 -> L0385 -> L0205 -> L0201
+
+------------------------------------------------------
+BFS comparison (treating graph as unweighted):
+------------------------------------------------------
+Case 2 (L0001 -> L0010):
+  Dijkstra path length: 8 nodes, weighted cost = 27
+  BFS path length:      6 nodes, weighted cost = 30
+  Cost difference:      3
+
+Case 3 (L0001 -> L0101 via L0105):
+  Dijkstra path length: 15 nodes, weighted cost = 39
+  BFS path length:      10 nodes, weighted cost = 52
+  Cost difference:      13
+
+Case 4 (L0001 -> L0201 via L0105 -> L0205):
+  Dijkstra path length: 18 nodes, weighted cost = 48
+  BFS path length:      11 nodes, weighted cost = 66
+  Cost difference:      18
+

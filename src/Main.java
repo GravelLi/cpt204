@@ -1,3 +1,7 @@
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.util.ArrayList;
+
 public class Main {
     public static void main(String[] args) {
         TaskAProcessor processor = new TaskAProcessor();
@@ -80,11 +84,39 @@ public class Main {
         return builder.toString();
     }
 
+    /**
+     * Runs all Task B logic and mirrors every console line to
+     * task_b_output.txt for inclusion in the report appendix.
+     * Task A output is not duplicated to the file.
+     */
     private static void runTaskB(TaskAResult resultA, TaskAResult resultB, TaskAResult resultC) {
+        PrintStream originalOut = System.out;
+        PrintStream fileOut = null;
+
+        try {
+            fileOut = new PrintStream("task_b_output.txt");
+            System.setOut(new TeePrintStream(originalOut, fileOut));
+        } catch (FileNotFoundException e) {
+            System.out.println("Warning: could not open task_b_output.txt for writing. Continuing with console output only.");
+        }
+
+        try {
+            executeTaskB(resultA, resultB, resultC);
+        } finally {
+            System.out.flush();
+            System.setOut(originalOut);
+            if (fileOut != null) {
+                fileOut.close();
+            }
+        }
+    }
+
+    private static void executeTaskB(TaskAResult resultA, TaskAResult resultB, TaskAResult resultC) {
         Graph graph = new Graph();
         graph.loadFromCSV("paths.csv");
 
         Dijkstra dijkstra = new Dijkstra(graph);
+        BFS bfs = new BFS(graph);
 
         Location[] topA = resultA.getTopTenLocations();
         Location[] topB = resultB.getTopTenLocations();
@@ -119,6 +151,8 @@ public class Main {
                 "Case 3", a1, b1, b5, case3,
                 "Case 4", a1, c1, b5 + " -> " + c5, case4
         );
+
+        printBFSComparison(bfs, a1, a10, b1, b5, c1, c5, case2, case3, case4);
     }
 
     private static void printPathCase(String caseName, String start, String destination, String waypoint, PathResult result) {
@@ -130,6 +164,19 @@ public class Main {
         if (result.getTotalCost() == Integer.MAX_VALUE) {
             System.out.println("Shortest Path: No path found");
             System.out.println("Total Cost: INF");
+        } else if (result.hasSegments()) {
+            // per-segment breakdown for waypoint queries (Case 3 / Case 4)
+            ArrayList<PathResult> segments = result.getSegments();
+            for (int i = 0; i < segments.size(); i++) {
+                PathResult segment = segments.get(i);
+                String[] segPath = segment.getPath();
+                String segStart = segPath[0];
+                String segEnd = segPath[segPath.length - 1];
+                System.out.printf("  Segment %d (%s -> %s): %s, cost = %d%n",
+                        i + 1, segStart, segEnd, segment.getPathString(), segment.getTotalCost());
+            }
+            System.out.println("Full path: " + result.getPathString());
+            System.out.println("Total cost: " + result.getTotalCost());
         } else {
             System.out.println("Shortest Path: " + result.getPathString());
             System.out.println("Total Cost: " + result.getTotalCost());
@@ -185,5 +232,52 @@ public class Main {
                 waypoint,
                 costText,
                 pathText);
+    }
+
+    /**
+     * Empirical comparison block: runs BFS on each non-trivial case and
+     * contrasts its weighted cost with Dijkstra's optimum. Case 1 is
+     * skipped because it is a self-loop with cost 0.
+     */
+    private static void printBFSComparison(BFS bfs,
+                                            String a1, String a10,
+                                            String b1, String b5,
+                                            String c1, String c5,
+                                            PathResult dijkstraCase2,
+                                            PathResult dijkstraCase3,
+                                            PathResult dijkstraCase4) {
+        System.out.println("------------------------------------------------------");
+        System.out.println("BFS comparison (treating graph as unweighted):");
+        System.out.println("------------------------------------------------------");
+
+        PathResult bfsCase2 = bfs.findShortestPathByEdgeCount(a1, a10);
+        PathResult bfsCase3 = bfs.findPathThroughWaypoints(new String[]{a1, b5, b1});
+        PathResult bfsCase4 = bfs.findPathThroughWaypoints(new String[]{a1, b5, c5, c1});
+
+        printBFSComparisonCase("Case 2 (" + a1 + " -> " + a10 + ")", dijkstraCase2, bfsCase2);
+        printBFSComparisonCase("Case 3 (" + a1 + " -> " + b1 + " via " + b5 + ")", dijkstraCase3, bfsCase3);
+        printBFSComparisonCase("Case 4 (" + a1 + " -> " + c1 + " via " + b5 + " -> " + c5 + ")", dijkstraCase4, bfsCase4);
+    }
+
+    private static void printBFSComparisonCase(String header, PathResult dijkstraResult, PathResult bfsResult) {
+        System.out.println(header + ":");
+
+        int dijkstraNodes = dijkstraResult.getPath().length;
+        int dijkstraCost = dijkstraResult.getTotalCost();
+
+        System.out.printf("  Dijkstra path length: %d nodes, weighted cost = %d%n",
+                dijkstraNodes, dijkstraCost);
+
+        if (bfsResult.getTotalCost() == Integer.MAX_VALUE) {
+            System.out.println("  BFS path length:      no path found");
+        } else {
+            int bfsNodes = bfsResult.getPath().length;
+            int bfsCost = bfsResult.getTotalCost();
+            System.out.printf("  BFS path length:      %d nodes, weighted cost = %d%n",
+                    bfsNodes, bfsCost);
+            System.out.printf("  Cost difference:      %d%n", bfsCost - dijkstraCost);
+        }
+
+        System.out.println();
     }
 }
