@@ -10,13 +10,36 @@ public class Main {
         TaskAResult resultB = processor.processDataset("Dataset B", "candidates_B.csv");
         TaskAResult resultC = processor.processDataset("Dataset C", "candidates_C.csv");
 
-        printResult(resultA);
-        printResult(resultB);
-        printResult(resultC);
-
-        printSummaryTable(resultA, resultB, resultC);
+        runTaskA(resultA, resultB, resultC);
 
         runTaskB(resultA, resultB, resultC);
+    }
+
+    private static void runTaskA(TaskAResult resultA, TaskAResult resultB, TaskAResult resultC) {
+        PrintStream originalOut = System.out;
+        PrintStream fileOut = null;
+
+        try {
+            fileOut = new PrintStream("task_a_output.txt");
+            System.setOut(new TeePrintStream(originalOut, fileOut));
+        } catch (FileNotFoundException e) {
+            System.out.println("Warning: could not open task_a_output.txt for writing. Continuing with console output only.");
+        }
+
+        try {
+            printResult(resultA);
+            printResult(resultB);
+            printResult(resultC);
+
+            printSummaryTable(resultA, resultB, resultC);
+        } finally {
+            System.out.flush();
+            System.setOut(originalOut);
+
+            if (fileOut != null) {
+                fileOut.close();
+            }
+        }
     }
 
     private static void printResult(TaskAResult result) {
@@ -240,12 +263,12 @@ public class Main {
      * skipped because it is a self-loop with cost 0.
      */
     private static void printBFSComparison(BFS bfs,
-                                            String a1, String a10,
-                                            String b1, String b5,
-                                            String c1, String c5,
-                                            PathResult dijkstraCase2,
-                                            PathResult dijkstraCase3,
-                                            PathResult dijkstraCase4) {
+                                           String a1, String a10,
+                                           String b1, String b5,
+                                           String c1, String c5,
+                                           PathResult dijkstraCase2,
+                                           PathResult dijkstraCase3,
+                                           PathResult dijkstraCase4) {
         System.out.println("------------------------------------------------------");
         System.out.println("BFS comparison (treating graph as unweighted):");
         System.out.println("------------------------------------------------------");
