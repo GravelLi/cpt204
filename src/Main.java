@@ -6,6 +6,7 @@ public class Main {
     public static void main(String[] args) {
         TaskAProcessor processor = new TaskAProcessor();
 
+        // Process the three candidate datasets for Task A.
         TaskAResult resultA = processor.processDataset("Dataset A", "candidates_A.csv");
         TaskAResult resultB = processor.processDataset("Dataset B", "candidates_B.csv");
         TaskAResult resultC = processor.processDataset("Dataset C", "candidates_C.csv");
@@ -20,6 +21,7 @@ public class Main {
         PrintStream fileOut = null;
 
         try {
+            // Save Task A output into a text file while still showing it in console.
             fileOut = new PrintStream("task_a_output.txt");
             System.setOut(new TeePrintStream(originalOut, fileOut));
         } catch (FileNotFoundException e) {
@@ -56,6 +58,7 @@ public class Main {
 
         Location[] topTenLocations = result.getTopTenLocations();
 
+        // Print the selected top 10 locations one by one.
         for (int i = 0; i < topTenLocations.length; i++) {
             System.out.println((i + 1) + ". " + topTenLocations[i]);
         }
@@ -96,6 +99,7 @@ public class Main {
     private static String topTenToString(Location[] topTenLocations) {
         StringBuilder builder = new StringBuilder();
 
+        // Join all top 10 location IDs into one readable string.
         for (int i = 0; i < topTenLocations.length; i++) {
             builder.append(topTenLocations[i].getLocationId());
 
@@ -141,6 +145,7 @@ public class Main {
         Dijkstra dijkstra = new Dijkstra(graph);
         BFS bfs = new BFS(graph);
 
+        // Get the top 10 locations selected from each dataset.
         Location[] topA = resultA.getTopTenLocations();
         Location[] topB = resultB.getTopTenLocations();
         Location[] topC = resultC.getTopTenLocations();
@@ -154,6 +159,7 @@ public class Main {
         String c1 = topC[0].getLocationId();
         String c5 = topC[4].getLocationId();
 
+        // Four required shortest-path cases for Task B.
         PathResult case1 = dijkstra.findShortestPath(a1, a1);
         PathResult case2 = dijkstra.findShortestPath(a1, a10);
         PathResult case3 = dijkstra.findPathThroughWaypoints(new String[]{a1, b5, b1});
@@ -273,6 +279,7 @@ public class Main {
         System.out.println("BFS comparison (treating graph as unweighted):");
         System.out.println("------------------------------------------------------");
 
+        // Run BFS for the same cases so the outputs can be compared.
         PathResult bfsCase2 = bfs.findShortestPathByEdgeCount(a1, a10);
         PathResult bfsCase3 = bfs.findPathThroughWaypoints(new String[]{a1, b5, b1});
         PathResult bfsCase4 = bfs.findPathThroughWaypoints(new String[]{a1, b5, c5, c1});
