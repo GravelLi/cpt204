@@ -11,23 +11,27 @@ public class TeePrintStream extends PrintStream {
 
     public TeePrintStream(OutputStream main, PrintStream second) {
         super(main, true);
+        // The second stream is usually the output text file.
         this.second = second;
     }
 
     @Override
     public void write(int b) {
+        // Write the same byte to both console and file.
         super.write(b);
         second.write(b);
     }
 
     @Override
     public void write(byte[] buf, int off, int len) {
+        // Write a group of bytes to both outputs.
         super.write(buf, off, len);
         second.write(buf, off, len);
     }
 
     @Override
     public void flush() {
+        // Make sure both streams are fully updated.
         super.flush();
         second.flush();
     }
