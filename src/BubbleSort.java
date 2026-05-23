@@ -3,6 +3,7 @@ public class BubbleSort implements SortAlgorithm {
     public void sort(Location[] locations) {
         int n = locations.length;
 
+        // Compare neighbouring locations and move larger-priority ones forward.
         for (int i = 0; i < n - 1; i++) {
             boolean swapped = false;
 
@@ -15,6 +16,7 @@ public class BubbleSort implements SortAlgorithm {
                 }
             }
 
+            // If no swap happens, the array is already sorted.
             if (!swapped) {
                 break;
             }
