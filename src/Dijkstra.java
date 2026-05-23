@@ -7,10 +7,12 @@ public class Dijkstra {
     private Graph graph;
 
     public Dijkstra(Graph graph) {
+        // Keep the graph object for all shortest-path searches.
         this.graph = graph;
     }
 
     public PathResult findShortestPath(String start, String destination) {
+        // If start and destination are identical, the shortest path cost is zero.
         if (start.equals(destination)) {
             String[] path = {start};
             return new PathResult(path, 0);
@@ -22,6 +24,7 @@ public class Dijkstra {
 
         ArrayList<String> allLocations = graph.getAllLocations();
 
+        // Set all distances to infinity at the beginning.
         for (String location : allLocations) {
             distances.put(location, Integer.MAX_VALUE);
         }
@@ -29,11 +32,13 @@ public class Dijkstra {
         distances.put(start, 0);
         priorityQueue.add(new NodeDistance(start, 0));
 
+        // Always expand the currently cheapest known node first.
         while (!priorityQueue.isEmpty()) {
             NodeDistance current = priorityQueue.poll();
             String currentLocation = current.getLocation();
             int currentDistance = current.getDistance();
 
+            // Skip old queue entries that are no longer useful.
             if (currentDistance > distances.get(currentLocation)) {
                 continue;
             }
@@ -44,6 +49,7 @@ public class Dijkstra {
 
             ArrayList<Edge> edges = graph.getEdges(currentLocation);
 
+            // Try to relax each outgoing edge.
             for (Edge edge : edges) {
                 String neighbor = edge.getToLocation();
                 int newDistance = currentDistance + edge.getWeight();
@@ -56,6 +62,7 @@ public class Dijkstra {
             }
         }
 
+        // If the destination is still infinity, there is no valid path.
         if (!distances.containsKey(destination) || distances.get(destination) == Integer.MAX_VALUE) {
             String[] emptyPath = {};
             return new PathResult(emptyPath, Integer.MAX_VALUE);
@@ -79,6 +86,7 @@ public class Dijkstra {
         ArrayList<PathResult> segments = new ArrayList<>();
         int totalCost = 0;
 
+        // Solve each small segment and combine them into one complete route.
         for (int i = 0; i < locations.length - 1; i++) {
             PathResult segmentResult = findShortestPath(locations[i], locations[i + 1]);
 
@@ -117,6 +125,7 @@ public class Dijkstra {
         ArrayList<String> path = new ArrayList<>();
         String current = destination;
 
+        // Rebuild the path by moving backwards from destination to start.
         while (current != null) {
             path.add(current);
 
@@ -157,6 +166,7 @@ public class Dijkstra {
 
         @Override
         public int compareTo(NodeDistance other) {
+            // Smaller distance should have higher priority in the queue.
             return this.distance - other.distance;
         }
     }
