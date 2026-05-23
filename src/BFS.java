@@ -7,7 +7,6 @@ import java.util.Queue;
 
 /**
  * Unweighted shortest-path baseline using breadth-first search.
- *
  * BFS minimises the number of edges in the path, treating every edge
  * as having unit weight. The total cost reported in the returned
  * PathResult is the *real* weighted cost of the BFS-selected path,
@@ -21,6 +20,7 @@ public class BFS {
     private Graph graph;
 
     public BFS(Graph graph) {
+        // Store the graph so BFS can search through its connections.
         this.graph = graph;
     }
 
@@ -31,20 +31,24 @@ public class BFS {
      * with Dijkstra's weighted optimum.
      */
     public PathResult findShortestPathByEdgeCount(String start, String dest) {
+        // If start and destination are the same, no movement is needed.
         if (start.equals(dest)) {
             String[] selfPath = {start};
             return new PathResult(selfPath, 0);
         }
 
+        // previous is used later to rebuild the final path.
         HashMap<String, String> previous = new HashMap<>();
         HashSet<String> visited = new HashSet<>();
         Queue<String> queue = new LinkedList<>();
 
+        // Start BFS from the start node.
         queue.add(start);
         visited.add(start);
 
         boolean found = false;
 
+        // Standard BFS loop: visit nodes level by level.
         while (!queue.isEmpty()) {
             String current = queue.poll();
 
@@ -55,6 +59,7 @@ public class BFS {
 
             ArrayList<Edge> edges = graph.getEdges(current);
 
+            // Check every neighbour of the current node.
             for (Edge edge : edges) {
                 String neighbor = edge.getToLocation();
 
@@ -66,11 +71,13 @@ public class BFS {
             }
         }
 
+        // If the destination cannot be reached, return an empty path.
         if (!found) {
             String[] emptyPath = {};
             return new PathResult(emptyPath, Integer.MAX_VALUE);
         }
 
+        // Build the node path and then calculate its real weighted cost.
         String[] path = buildPath(previous, start, dest);
         int weightedCost = computeWeightedCost(path);
 
@@ -87,6 +94,7 @@ public class BFS {
         ArrayList<PathResult> segments = new ArrayList<>();
         int totalCost = 0;
 
+        // Find a BFS path for every pair of consecutive locations.
         for (int i = 0; i < locations.length - 1; i++) {
             PathResult segmentResult = findShortestPathByEdgeCount(locations[i], locations[i + 1]);
 
@@ -101,6 +109,7 @@ public class BFS {
             String[] segmentPath = segmentResult.getPath();
 
             for (int j = 0; j < segmentPath.length; j++) {
+                // Avoid adding the same waypoint twice when joining segments.
                 if (i > 0 && j == 0) {
                     continue;
                 }
@@ -124,6 +133,7 @@ public class BFS {
         ArrayList<String> path = new ArrayList<>();
         String current = destination;
 
+        // Trace backwards from destination to start using the previous map.
         while (current != null) {
             path.add(current);
 
@@ -152,6 +162,7 @@ public class BFS {
     private int computeWeightedCost(String[] path) {
         int cost = 0;
 
+        // Add the weight between each pair of neighbouring nodes in the path.
         for (int i = 0; i < path.length - 1; i++) {
             ArrayList<Edge> edges = graph.getEdges(path[i]);
 
