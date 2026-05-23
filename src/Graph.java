@@ -8,6 +8,7 @@ public class Graph {
     private HashMap<String, ArrayList<Edge>> adjacencyList;
 
     public Graph() {
+        // The graph is stored as an adjacency list.
         adjacencyList = new HashMap<>();
     }
 
@@ -20,6 +21,7 @@ public class Graph {
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
             String line = reader.readLine();
 
+            // Each line gives one weighted connection between two locations.
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
 
@@ -69,11 +71,13 @@ public class Graph {
     }
 
     public void addUndirectedEdge(String fromLocation, String toLocation, int weight) {
+        // Since the graph is undirected, add both directions.
         addDirectedEdge(fromLocation, toLocation, weight);
         addDirectedEdge(toLocation, fromLocation, weight);
     }
 
     private void addDirectedEdge(String fromLocation, String toLocation, int weight) {
+        // Create the list first if this node has not appeared before.
         if (!adjacencyList.containsKey(fromLocation)) {
             adjacencyList.put(fromLocation, new ArrayList<>());
         }
@@ -82,6 +86,7 @@ public class Graph {
     }
 
     public ArrayList<Edge> getEdges(String location) {
+        // Return an empty list if the location has no recorded edges.
         if (!adjacencyList.containsKey(location)) {
             return new ArrayList<>();
         }
@@ -90,6 +95,7 @@ public class Graph {
     }
 
     public ArrayList<String> getAllLocations() {
+        // Return all node names currently stored in the graph.
         return new ArrayList<>(adjacencyList.keySet());
     }
 }
