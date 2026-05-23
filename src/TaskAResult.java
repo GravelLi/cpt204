@@ -6,6 +6,7 @@ public class TaskAResult {
     private Location[] topTenLocations;
 
     public TaskAResult(String datasetName, double bubbleTime, double quickTime, double mergeTime, Location[] topTenLocations) {
+        // Store all Task A results together for easier printing later.
         this.datasetName = datasetName;
         this.bubbleTime = bubbleTime;
         this.quickTime = quickTime;
