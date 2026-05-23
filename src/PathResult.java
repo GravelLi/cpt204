@@ -12,6 +12,7 @@ public class PathResult {
     private ArrayList<PathResult> segments;
 
     public PathResult(String[] path, int totalCost) {
+        // Save the path and its cost as one result object.
         this.path = path;
         this.totalCost = totalCost;
         this.segments = null;
@@ -28,6 +29,7 @@ public class PathResult {
     public String getPathString() {
         StringBuilder builder = new StringBuilder();
 
+        // Convert the path array into a readable A -> B -> C format.
         for (int i = 0; i < path.length; i++) {
             builder.append(path[i]);
 
